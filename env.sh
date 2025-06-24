@@ -98,3 +98,42 @@ function check_project() {
 # Welcome message
 echo "🚀 Copilot environment loaded for @jamiescottcraik"
 check_project
+
+# GitHub SSH helpers
+alias ssh-github-load="op document get 'GitHub SSH Private Key' > ~/.ssh/github_ed25519 && chmod 600 ~/.ssh/github_ed25519"
+alias ssh-github-test="ssh -T git@github.com"
+
+# Ollama helpers
+alias ollama-list="ollama list"
+alias ollama-chat="ollama run llama3.2"
+alias ollama-code="ollama run codellama"
+
+# Function to switch between OpenAI and Ollama
+ai_switch() {
+    case "$1" in
+        "ollama")
+            export LLM_PROVIDER="ollama"
+            export LLM_API_BASE="http://localhost:11434"
+            export LLM_MODEL="${2:-llama3.2}"
+            echo "🦙 Switched to Ollama (model: $LLM_MODEL)"
+            ;;
+        "openai")
+            export LLM_PROVIDER="openai"
+            export LLM_API_BASE="https://api.openai.com/v1"
+            export LLM_MODEL="${2:-gpt-4}"
+            echo "🤖 Switched to OpenAI (model: $LLM_MODEL)"
+            ;;
+        *)
+            echo "Usage: ai_switch [ollama|openai] [model]"
+            echo "Current: ${LLM_PROVIDER:-not set}"
+            ;;
+    esac
+}
+
+# Auto-load GitHub SSH if in a git repo
+if [ -d .git ] && command -v op &> /dev/null; then
+    # Check if SSH key exists
+    if [ ! -f ~/.ssh/github_ed25519 ]; then
+        echo "💡 Tip: Load GitHub SSH with: ssh-github-load"
+    fi
+fi
