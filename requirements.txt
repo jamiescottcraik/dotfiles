@@ -1,0 +1,3 @@
+# Python packages you want available to Copilot tasks
+rich
+ipython
